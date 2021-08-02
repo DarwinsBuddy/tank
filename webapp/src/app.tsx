@@ -1,10 +1,10 @@
 import { FunctionalComponent, h } from 'preact';
 import { Route, Router } from 'preact-router';
 
-import Home from '../routes/home';
-import NotFoundPage from '../routes/notfound';
-import Header from './header';
-import { ConfigContext, config, SocketContext, socket } from './context/global-context';
+import Home from './routes/home';
+import NotFoundPage from './routes/notfound';
+import Header from './components/header';
+import { ConfigContext, config, SocketContext, socket } from './components/context/global-context';
 
 const App: FunctionalComponent = () => {
     return (

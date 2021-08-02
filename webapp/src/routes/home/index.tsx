@@ -1,3 +1,4 @@
+/** @jsx jsx */
 import { FunctionalComponent, h } from 'preact';
 import { useEffect, useState, useContext } from 'preact/hooks';
 import { ConfigContext, SocketContext } from '../../components/context/global-context';
@@ -5,7 +6,8 @@ import HistoryChart from '../../components/history-chart';
 import { utcStringToLocalString } from '../../components/history-chart/model';
 
 import { DepthMeasurement, initialDepthMeasurement } from '../../model/depth-measurement';
-import style from './style.css';
+import {home, text, title} from './style';
+import { jsx } from '@emotion/react';
 
 
 const Home: FunctionalComponent = () => {
@@ -33,11 +35,11 @@ const Home: FunctionalComponent = () => {
     
 
     return (
-        <div class={style.home}>
-            <div class={style.title}>Currently</div>
-            <div class={style.text}>{utcStringToLocalString(config.LOCALE, measurement.date)}</div>
-            <div class={style.text}>{measurement.depth}m</div>
-            <div class={style.title}>History</div>
+        <div css={home}>
+            <div css={title}>Currently</div>
+            <div css={text}>{utcStringToLocalString(config.LOCALE, measurement.date)}</div>
+            <div css={text}>{measurement.depth}m</div>
+            <div css={title}>History</div>
             <HistoryChart showChart />
         </div>
     );

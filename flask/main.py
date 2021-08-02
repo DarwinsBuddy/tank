@@ -42,16 +42,14 @@ app.config['SECRET_KEY'] = '6956d8a3-e24c-4557-bfad-9d0f578b33c9'
 
 NAMESPACE = '/data'
 
-# @app.route('/', defaults={'path': ''})
-# @app.route('/<path:path>')
-
 
 def _corsify_actual_response(response):
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
 
-@app.route('/')
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
 def serve(path):
     print(app.static_folder)
     if path != "" and os.path.exists(app.static_folder + '/' + path):

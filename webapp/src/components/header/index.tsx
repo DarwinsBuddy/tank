@@ -1,25 +1,19 @@
+/** @jsx jsx */
 import { FunctionalComponent, h } from 'preact';
 import { Link } from 'preact-router/match';
-import style from './style.css';
+import { jsx } from '@emotion/react';
+import { header } from './style';
 
 const Header: FunctionalComponent = () => {
     return (
-        <header class={style.header}>
+        <header css={header}>
             <h1>Tank</h1>
             <nav>
-                <Link activeClassName={style.active} href="/">
+                <Link activeClassName="active" href="/">
                     Measurements
                 </Link>
             </nav>
         </header>
     );
 };
-
-/* <Link activeClassName={style.active} href="/profile">
-Me
-</Link>
-<Link activeClassName={style.active} href="/profile/john">
-    John
-</Link>
-*/
 export default Header;

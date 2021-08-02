@@ -1,7 +1,16 @@
 import { createContext } from "preact";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
-export const config = {
+export type Config = {
+    backend: string;
+    HISTORY_LIMIT: number;
+    NAMESPACE: string;
+    MAX_HEIGHT: number;
+    MIN_HEIGHT: number;
+    LOCALE: string;
+}
+
+export const config: Config = {
     backend: 'http://localhost:8080',
     HISTORY_LIMIT: 10,
     NAMESPACE: 'data',
@@ -24,5 +33,5 @@ const socketConfig = {
 //export const socket = io(`/${NAMESPACE}`, config);
 export const socket = io(`${config.backend}/${config.NAMESPACE}`, socketConfig);
 
-export const ConfigContext = createContext(config);
-export const SocketContext = createContext(socket);
+export const ConfigContext = createContext<Config>(config);
+export const SocketContext = createContext<Socket>(socket);

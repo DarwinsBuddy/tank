@@ -1,10 +1,13 @@
-import { FunctionalComponent, h } from 'preact';
+/** @jsx jsx */
 import { useContext, useEffect, useState } from 'preact/hooks';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, Text } from 'recharts';
 import { DepthMeasurement, initialDepthMeasurement } from '../../model/depth-measurement';
-import { ConfigContext, SocketContext } from '../context/global-context';
+import { Config, ConfigContext, SocketContext } from '../context/global-context';
 import { Series, toSeriesPoint } from './model';
-import style from './style.css';
+import { jsx } from '@emotion/react';
+import { centered, chartContainer } from './style';
+import { FunctionalComponent, h } from 'preact';
+import { Socket } from 'socket.io-client';
 
 interface HistoryChartProperties {
     showChart?: boolean;
@@ -13,8 +16,8 @@ interface HistoryChartProperties {
 const DEPTH_SERIES_LABEL = 'Depth (m)';
 
 const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: HistoryChartProperties) => {
-    const socket = useContext(SocketContext);
-    const config = useContext(ConfigContext);
+    const socket = useContext<Socket>(SocketContext);
+    const config = useContext<Config>(ConfigContext);
     const [history, setHistory] = useState([initialDepthMeasurement]);    
     const [chartData, setChartData] = useState<Series>(
         {
@@ -23,7 +26,7 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
         }
     );
 
-    function renderHistoryEvents(history: DepthMeasurement[]): h.JSX.Element[] {
+    function renderHistoryEvents(history: DepthMeasurement[]): JSX.Element[] {
         const events = [];
         for(const ev of history) {
             events.push(
@@ -35,10 +38,10 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
         return events;
     }
 
-    function renderChart(series: Series): h.JSX.Element {
+    function renderChart(series: Series) {
    
         return (
-            <div class={style.chartContainer}>
+            <div css={chartContainer}>
                 <ResponsiveContainer width="80%" height="50%">
                     <LineChart data={series.data} margin={{ top: 5, right: 0, bottom: 150, left: 150 }}>
                         <Line type="monotone" dataKey="depth" stroke="#8884d8" dot={{r: 1}} animationDuration={50} />
@@ -46,7 +49,7 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
                         <ReferenceLine y={config.MIN_HEIGHT} label="Empty" stroke="green" strokeDasharray="4 3" />
                         <CartesianGrid stroke="#ccc" strokeDasharray="1 1" />
                         <XAxis dataKey="date" textAnchor="end" angle={-45} />
-                        <YAxis dataKey="depth" textAnchor="end" label={(<Text x={0} y={0} dx={180}dy={280} offset={0} angle={-90}>Water level (m)</Text>)} />
+                        <YAxis dataKey="depth" textAnchor="end" label={(<Text x={0} y={0} dx={180}dy={150} offset={0} angle={-90}>Water level (m)</Text>)} />
                         <Tooltip />
                     </LineChart>
                 </ResponsiveContainer>
@@ -93,7 +96,7 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
             {!props.showChart && renderHistoryEvents(history)}
             {props.showChart && chartData.label !== null && renderChart(chartData)}
             {props.showChart && chartData.label == null && 
-                <div class={style.centered}>Loading history...</div>
+                <div css={centered}>Loading history...</div>
             }
         </div>);
 }
