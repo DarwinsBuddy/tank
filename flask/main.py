@@ -15,7 +15,7 @@ parser.add_argument('-e', '--env', nargs=1, help='Environment (dev|prod) default
 
 args = parser.parse_args()
 dev = args.env == 'dev'
-app = Flask(__name__, static_folder='../webapp/build')
+app = Flask(__name__, static_folder='../webapp/dist')
 
 # my data
 MEASURING_INTERVAL = 5  # seconds
