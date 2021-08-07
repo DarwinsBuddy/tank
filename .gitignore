@@ -1,1 +1,4 @@
 .idea/
+**/__pycache__
+tank/__pycache__
+venv/

@@ -1,8 +1,8 @@
 Flask==2.0.1
 flask-socketio
 Jinja2
-flask_apscheduler
 argparse
 pyzmq
 flask_cors
-flask_classful
+flask_apscheduler
+apscheduler
