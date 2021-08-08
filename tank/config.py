@@ -16,7 +16,7 @@ MAX_DATA = int(MAX_HISTORY_SECONDS / MEASURING_INTERVAL)
 BROADCASTING_INTERVAL = 1  # seconds
 BROADCASTING_HISTORY_INTERVAL = 5  # seconds
 NAMESPACE = '/data'
-
+ZMQ_RECV_TIMEOUT = 1000
 
 class AppConfig:
     def __init__(self, env: str):
@@ -28,29 +28,29 @@ class AppConfig:
         else:
             self.ENV = 'PRODUCTION'
         self.SECRET = '6956d8a3-e24c-4557-bfad-9d0f578b33c9'
-        self.APSCHEDULER = {
-            'jobstores': {
-                'mongo': {
-                    'type': 'mongodb'
-                },
-                'default': {
-                    'type': 'sqlalchemy',
-                    'url': 'sqlite:///jobs.sqlite'
-                }
+        # self.SCHEDULER_JOBSTORES = {
+        #    'mongo': {
+        #        'type': 'mongodb'
+        #    },
+        #    'default': {
+        #        'type': 'sqlalchemy',
+        #        'url': 'sqlite:///jobs.sqlite'
+        #    }
+        # }
+        # Set the actuator, and the number of threads
+        self.SCHEDULER_EXECUTORS = {
+            'default': {
+                'class': 'apscheduler.executors.pool:ThreadPoolExecutor',
+                'max_workers': 20
             },
-            # Set the actuator, and the number of threads
-            'executors': {
-                'default': {
-                    'class': 'apscheduler.executors.pool:ThreadPoolExecutor',
-                    'max_workers': '20'
-                },
-                'processpool': {
-                    'class': 'apscheduler.executors.pool:ProcessPoolExecutor',
-                    'max_workers': '5'
-                }
-            },
-            'paused': 'true',
-            'job_defaults.coalesce': 'false',  # Close the new job by default at #
-            # 3 set maximum number of instances running simultaneously scheduler particular job
-            'job_defaults.max_instances': 3
+            # 'processpool': {
+            #    'class': 'apscheduler.executors.pool:ProcessPoolExecutor',
+            #    'max_workers': 5
+            # }
         }
+        self.SCHEDULER_JOB_DEFAULTS = {
+            'coalesce': False,  # Close the new job by default at #
+            # 3 set maximum number of instances running simultaneously scheduler particular job
+            'max_instances': 3
+        }
+        self.SCHEDULER_PAUSED = True
