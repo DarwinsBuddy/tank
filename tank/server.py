@@ -3,6 +3,7 @@ import random
 from flask import Flask
 from flask_apscheduler import APScheduler
 from flask_socketio import SocketIO
+from pkg_resources import resource_filename
 
 from . import routes
 from .config import args, AppConfig, BROADCASTING_INTERVAL, MEASURING_INTERVAL, NAMESPACE
@@ -15,7 +16,10 @@ class App:
     depth_sub = None
 
     def __init__(self):
-        self.app = Flask(__name__, static_folder='../webapp/dist', )
+        # self.app = Flask(__name__, static_folder='../webapp/dist', )
+        static_folder = resource_filename('tank', 'webapp')
+        print("STATIC: ", static_folder)
+        self.app = Flask(__name__, static_folder=f'{static_folder}/dist')
         self.app.config.from_object(AppConfig(args.env))
         self.depth_sub = ZMQSubscriber("depth", store.add_measurement)
 

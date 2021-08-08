@@ -1,8 +1,0 @@
-Flask==2.0.1
-flask-socketio
-Jinja2
-argparse
-pyzmq
-flask_cors
-flask_apscheduler
-apscheduler

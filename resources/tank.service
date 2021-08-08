@@ -1,0 +1,12 @@
+[Unit]
+Description=TANK WebUI
+After=syslog.target network.target
+
+[Service]
+Type=simple
+WorkingDirectory={{ venv_home }}
+ExecStart={{ venv_home }}/fooservice --serve-in-foreground
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

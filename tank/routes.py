@@ -1,7 +1,6 @@
 import os
 
 from flask import send_from_directory, request, jsonify, render_template
-
 from .config import MAX_DATA
 from .storage import store
 
