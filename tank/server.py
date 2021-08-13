@@ -18,7 +18,7 @@ class App:
     def __init__(self):
         # self.app = Flask(__name__, static_folder='../webapp/dist', )
         webapp_folder = pkg_resources.resource_filename('tank', self.WEBAPP_DIR)
-        dist_folder = '' if args.env == 'dev' else 'dist'
+        dist_folder = 'dist'
         webapp_root = f'{webapp_folder}/{dist_folder}'
         print("webapp mounted at ", webapp_root)
         self.app = Flask(__name__, static_folder=webapp_root)
@@ -84,7 +84,7 @@ class App:
             self.depth_mock_pub.close()
         if self.depth_sub is not None:
             print('shutdown zmq sub')
-            self.depth_sub.close()
+            self.depth_sub.stop()
 
     def start(self):
         # socket.run(app, host="127.0.0.1", port="8080", debug="True")

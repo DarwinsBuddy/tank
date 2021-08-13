@@ -1,9 +1,9 @@
 export interface DepthMeasurement {
-    date: string;
-    depth: number;
+    date: string | null;
+    depth: number | null;
 }
 
 export const initialDepthMeasurement: DepthMeasurement = {
-    date: 'n/a',
-    depth: new Date().getUTCDate()
+    date: null,
+    depth: null
 }
