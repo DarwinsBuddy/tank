@@ -15,7 +15,9 @@
 2. browse to `127.0.0.1:8080`
 > service name: `tank.service`
 ## only as python module
+
 `python setup.py install`
+
 `python -m tank`
 # Uninstall
 ## systemd
