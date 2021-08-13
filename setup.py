@@ -1,4 +1,3 @@
-import distutils
 import os
 import subprocess
 import sys
@@ -31,7 +30,7 @@ class NpmCommand(cmd.Command):
         if self.webapp_path:
             print(os.getcwd())
             assert os.path.exists(self.webapp_path), (
-                    f"webapp path '{self.webapp_path}' does not exist.")
+                f"webapp path '{self.webapp_path}' does not exist.")
 
     def run(self):
         """Run command."""
@@ -69,6 +68,7 @@ setup(
     package_data={"tank": [
         "resources/webapp/dist/assets/*",
         "resources/webapp/dist/index.html"
+        "resources/tank.service"
     ]},
     cmdclass={
         'install': InstallWrapper,

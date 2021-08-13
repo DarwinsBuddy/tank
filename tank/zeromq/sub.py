@@ -32,5 +32,5 @@ class ZMQSubscriber(threading.Thread):
                 msg = message.decode('utf-8')
                 self.callback(' '.join(msg.split(' ')[1:]))
             except zmq.error.Again as e:
-                # print("Nothing recieved:", e)
+                # print("Nothing received:", e)
                 pass

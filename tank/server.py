@@ -1,9 +1,9 @@
 import random
 
+import pkg_resources
 from flask import Flask
 from flask_apscheduler import APScheduler
 from flask_socketio import SocketIO
-from pkg_resources import resource_listdir
 
 from . import routes
 from .config import args, AppConfig, BROADCASTING_INTERVAL, MEASURING_INTERVAL, NAMESPACE
@@ -17,8 +17,9 @@ class App:
 
     def __init__(self):
         # self.app = Flask(__name__, static_folder='../webapp/dist', )
-        dist_folder = resource_listdir('tank', self.WEBAPP_DIR)[0]
-        webapp_root = f'{self.WEBAPP_DIR}/{dist_folder}'
+        webapp_folder = pkg_resources.resource_filename('tank', self.WEBAPP_DIR)
+        dist_folder = '' if args.env == 'dev' else 'dist'
+        webapp_root = f'{webapp_folder}/{dist_folder}'
         print("webapp mounted at ", webapp_root)
         self.app = Flask(__name__, static_folder=webapp_root)
         self.app.config.from_object(AppConfig(args.env))
@@ -31,6 +32,8 @@ class App:
         if args.mock:
             # publish mocked depth measurement
             self.depth_mock_pub = ZMQPublisher("depth")
+        else:
+            self.depth_mock_pub = None
 
         # tscheduler = ThreadedScheduler(app)
         self.scheduler = APScheduler()
@@ -40,13 +43,16 @@ class App:
         # mocked measuring
         depth = random.randint(min_depth, max_depth) / 100
         print("[MEASURING] ", depth)
-        self.depth_mock_pub.send(f'{depth}')
+        if self.depth_mock_pub is not None:
+            self.depth_mock_pub.send(f'{depth}')
 
     def broadcast_history(self):
         self.socket.emit('history', store.get_history(), namespace=NAMESPACE)
 
     def broadcast_depth(self):
-        self.socket.emit('depth', store.get_last_measurement(), namespace=NAMESPACE)
+        last_measurement = store.get_last_measurement()
+        if last_measurement != -1:
+            self.socket.emit('depth', last_measurement, namespace=NAMESPACE)
 
     def add_jobs(self):
         self.scheduler.add_job(func=self.broadcast_depth,
@@ -56,7 +62,7 @@ class App:
                                name='broadcast depth measurement',
                                replace_existing=True
                                )
-        if args.env == 'dev':
+        if args.mock or args.env == 'dev':
             self.scheduler.add_job(func=self.mock_measure_depth,
                                    args=[100, 250],
                                    trigger='interval',

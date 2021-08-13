@@ -4,8 +4,7 @@ After=syslog.target network.target
 
 [Service]
 Type=simple
-WorkingDirectory={{ venv_home }}
-ExecStart={{ venv_home }}/fooservice --serve-in-foreground
+ExecStart=python -m tank
 Restart=on-abort
 
 [Install]

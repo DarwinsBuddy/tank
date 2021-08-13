@@ -1,16 +1,12 @@
 #!/bin/bash
 
-PACKAGE=tank
-WEBAPP=./webapp
-
-# install and build webapp
-cd "${PACKAGE}/${WEBAPP}" && \
-npm install && \
-npm run build &&
-cd ../..
-# install and build python-server
-python3 -m venv ./venv
-./venv/bin/python setup.py install
+SERVICE="tank.service"
+SERVICE_FILE="./tank/resources/${SERVICE}"
+# install python package
+sudo python setup.py install
 # copy service file into systemd
-
+sudo cp ${SERVICE_FILE} /etc/systemd/system/
 # enable and start service
+sudo systemctl daemon-reload
+sudo systemctl enable ${SERVICE}
+sudo systemctl restart ${SERVICE}
