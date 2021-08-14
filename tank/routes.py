@@ -1,11 +1,12 @@
 import os
 
 from flask import send_from_directory, request, jsonify, render_template
-from .config import MAX_DATA
-from .storage import store
+
+from tank import AppConfig
+from tank.storage import InMemoryStore
 
 
-def setup(app):
+def setup(app, store: InMemoryStore, config: AppConfig):
     def _corsify_actual_response(response):
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response
@@ -21,7 +22,7 @@ def setup(app):
 
     @app.route('/history')
     def history():
-        limit = int(request.args.get('limit')) or MAX_DATA
+        limit = int(request.args.get('limit')) or config.MAX_HISTORY_DATA
         print("LIMIT: ", limit)
         response = {'history': store.get_history(limit)}
         return _corsify_actual_response(jsonify(response))

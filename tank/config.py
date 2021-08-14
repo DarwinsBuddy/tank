@@ -1,33 +1,53 @@
 import argparse
+import configparser
 
-parser = argparse.ArgumentParser(description='Tank WebUI')
-parser.add_argument('-e', '--env', help='Environment (dev|prod) default: dev', type=str, default='prod')
-parser.add_argument('-m', '--mock', action='store_true', help='Start with mocked measurements', default=False)
-parser.add_argument('-zp', '--zmq-port', type=int, nargs=1, help='Listen port for zmq subscriber', default=5555)
-parser.add_argument('-za', '--zmq-addr', type=str, nargs=1, help='Listen address for zmq subscriber',
-                    default='0.0.0.0')
+import pkg_resources
 
-args = parser.parse_args()
-# data storage
-MEASURING_INTERVAL = 5  # seconds
-MAX_HISTORY_SECONDS = 3600
-MAX_DATA = int(MAX_HISTORY_SECONDS / MEASURING_INTERVAL)
-# socket.io communication
-BROADCASTING_INTERVAL = 1  # seconds
-BROADCASTING_HISTORY_INTERVAL = 5  # seconds
-NAMESPACE = '/data'
-ZMQ_RECV_TIMEOUT = 1000
 
 class AppConfig:
-    def __init__(self, env: str):
 
-        if env == 'dev':
+    @staticmethod
+    def parse_args() -> argparse.Namespace:
+        parser = argparse.ArgumentParser(description='Tank WebUI')
+        parser.add_argument('-e', '--env', help='Environment (dev|prod) default: dev', type=str, default='prod')
+        parser.add_argument('-m', '--mock', action='store_true', help='Start with mocked measurements', default=False)
+        parser.add_argument('-c', '--config', type=str,
+                            help='Path to config file',
+                            default=pkg_resources.resource_filename('tank', 'resources/tank.conf')
+                            )
+        parser.add_argument('-zp', '--zmq-port', type=int, nargs=1, help='Listen port for zmq subscriber', default=5555)
+
+        return parser.parse_args()
+
+    @staticmethod
+    def read_config(path):
+        config = configparser.ConfigParser()
+        with open(path, 'r') as configfile:
+            config.read_file(configfile)
+        return config
+
+    def __init__(self, args: argparse.Namespace):
+        self.args = args
+        self.config = self.read_config(args.config)
+        # flask
+        self.SECRET = self.config['Flask']['secret'] or None
+        # zmq
+        self.ZMQ_PORT = self.config['ZMQ']['port'] or 5555
+        # socketio
+        self.BROADCASTING_INTERVAL = int(self.config['SocketIO']['broadcasting_interval']) or 5
+        self.socketio_namespace = self.config['SocketIO']['namespace'] or '/data'
+        # storage
+        self.MAX_HISTORY_DATA = int(self.config['Storage']['max_history_data']) or 720
+        # custom
+        self.ZMQ_RECV_TIMEOUT = 1000
+        self.MEASURING_INTERVAL = 5
+
+        if self.args.env == 'dev':
             self.CORS_HEADERS = 'Content-Type'
-        if env == 'dev':
+        if self.args.env == 'dev':
             self.ENV = 'DEV'
         else:
             self.ENV = 'PRODUCTION'
-        self.SECRET = '6956d8a3-e24c-4557-bfad-9d0f578b33c9'
         # self.SCHEDULER_JOBSTORES = {
         #    'mongo': {
         #        'type': 'mongodb'

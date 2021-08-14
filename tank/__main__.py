@@ -1,10 +1,11 @@
 import signal
 import sys
 
+from tank import AppConfig
 from .server import App
 
 if __name__ == "__main__":
-    app = App()
+    app = App(AppConfig(AppConfig.parse_args()))
 
     # Shut down the scheduler when exiting the app
     # atexit.register(stop_application)

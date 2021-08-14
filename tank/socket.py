@@ -1,11 +1,11 @@
 from flask import copy_current_request_context, session
 from flask_socketio import disconnect, emit
 
-from .config import NAMESPACE
+from tank import AppConfig
 
 
-def setup(socket):
-    @socket.on('disconnect_request', namespace=NAMESPACE)
+def setup(socket, config: AppConfig):
+    @socket.on('disconnect_request', namespace=config.socketio_namespace)
     def disconnect_request():
         @copy_current_request_context
         def can_disconnect():

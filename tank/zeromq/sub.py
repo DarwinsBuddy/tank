@@ -3,20 +3,20 @@ import time
 
 import zmq
 
-from ..config import ZMQ_RECV_TIMEOUT
+from tank import AppConfig
 
 
 class ZMQSubscriber(threading.Thread):
 
     STOP_TIMEOUT = 5
 
-    def __init__(self, topic, callback=(lambda x: print(x)), port=5555):
+    def __init__(self, topic, callback=(lambda x: print(x)), listen_port=5555, timeout=1000):
         threading.Thread.__init__(self)
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.SUB)
-        self.socket.bind(f"tcp://*:{port}")
+        self.socket.bind(f"tcp://*:{listen_port}")
         self.socket.setsockopt(zmq.SUBSCRIBE, bytes(topic, encoding='utf-8'))
-        self.socket.setsockopt(zmq.RCVTIMEO, ZMQ_RECV_TIMEOUT)
+        self.socket.setsockopt(zmq.RCVTIMEO, timeout)
         self.socket.setsockopt(zmq.LINGER, 0)
         self.running = True
         self.stopped = False

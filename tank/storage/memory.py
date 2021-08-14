@@ -1,13 +1,15 @@
 import threading
 import datetime
 
+from tank import AppConfig
+
 
 class InMemoryStore:
 
-    def __init__(self, max_data):
+    def __init__(self, config: AppConfig):
         self.data_lock = threading.Lock()
         self.HISTORY = 'history'
-        self.max_data = max_data
+        self.max_data = config.MAX_HISTORY_DATA
         self.data = {
             self.HISTORY: []
         }
