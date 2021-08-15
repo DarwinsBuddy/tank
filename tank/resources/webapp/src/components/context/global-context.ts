@@ -12,7 +12,7 @@ export type Config = {
 
 export const config: Config = {
     backend: 'http://localhost:8080',
-    HISTORY_LIMIT: 10,
+    HISTORY_LIMIT: 100,
     NAMESPACE: 'data',
     MAX_HEIGHT: 6,
     MIN_HEIGHT: 0.5,
