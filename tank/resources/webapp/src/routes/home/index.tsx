@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { Fragment, FunctionalComponent } from "preact";
+import { FunctionalComponent } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
 import {
   ConfigContext,
@@ -45,7 +45,7 @@ const Home: FunctionalComponent = () => {
       {!!measurement.depth && (
         <div>
           <div css={text}>
-            {utcStringToLocalString(config.LOCALE, measurement.date)}
+            {utcStringToLocalString(config.LOCALE, measurement.date) || "N/A"}
           </div>
           <div css={text}>{measurement.depth} m</div>
         </div>

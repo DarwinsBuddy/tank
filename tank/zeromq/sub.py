@@ -23,7 +23,6 @@ class ZMQSubscriber(threading.Thread):
         self.callback = callback
 
     def stop(self):
-        print("running = False")
         self.running = False
         self.wait_for_stop(self.STOP_TIMEOUT)
 

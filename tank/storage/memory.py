@@ -35,4 +35,4 @@ class InMemoryStore:
 
     def get_last_measurement(self):
         with self.data_lock:
-            return self.data[self.HISTORY][-1] if len(self.data[self.HISTORY]) > 0 else -1
+            return self.data[self.HISTORY][-1] if len(self.data[self.HISTORY]) > 0 else None

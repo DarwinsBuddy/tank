@@ -57,7 +57,9 @@ class App:
 
     def broadcast_depth(self):
         last_measurement = self.store.get_last_measurement()
-        if last_measurement != -1:
+        print("Broadcasting depth: ", last_measurement)
+        if last_measurement is not None:
+            print(f"Emitting {last_measurement} on {self.config.socketio_namespace}")
             self.socket.emit('depth', last_measurement, namespace=self.config.socketio_namespace)
 
     def add_jobs(self):
