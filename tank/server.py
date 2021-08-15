@@ -1,4 +1,5 @@
 import random
+from pprint import pprint
 
 import pkg_resources
 from flask import Flask
@@ -41,14 +42,13 @@ class App:
         else:
             self.depth_mock_pub = None
 
-        # tscheduler = ThreadedScheduler(app)
         self.scheduler = APScheduler()
         self.socket = SocketIO(self.app, async_mode=None, cors_allowed_origins='*')
 
     def mock_measure_depth(self, min_depth=100, max_depth=250):
         # mocked measuring
         depth = random.randint(min_depth, max_depth) / 100
-        print("[MEASURING] ", depth)
+        print("[MOCK MEASURING] ", depth)
         if self.depth_mock_pub is not None:
             self.depth_mock_pub.send(f'{depth}')
 
@@ -57,9 +57,7 @@ class App:
 
     def broadcast_depth(self):
         last_measurement = self.store.get_last_measurement()
-        print("Broadcasting depth: ", last_measurement)
         if last_measurement is not None:
-            print(f"Emitting {last_measurement} on {self.config.socketio_namespace}")
             self.socket.emit('depth', last_measurement, namespace=self.config.socketio_namespace)
 
     def add_jobs(self):
@@ -70,7 +68,7 @@ class App:
                                name='broadcast depth measurement',
                                replace_existing=True
                                )
-        if self.config.args.mock or self.config.args.env == 'dev':
+        if self.config.args.mock:
             self.scheduler.add_job(func=self.mock_measure_depth,
                                    args=[100, 250],
                                    trigger='interval',
@@ -107,7 +105,7 @@ class App:
         print("Setup routes")
         routes.setup(self.app, self.store, self.config)
         print("___________________")
-        print(self.app.config)
+        pprint(self.app.config)
         print("___________________")
         print("Starting Scheduler")
         self.scheduler.start()

@@ -3,11 +3,8 @@ import time
 
 import zmq
 
-from tank import AppConfig
-
 
 class ZMQSubscriber(threading.Thread):
-
     STOP_TIMEOUT = 5
 
     def __init__(self, topic, callback=(lambda x: print(x)), listen_port=5555, timeout=1000):
@@ -29,7 +26,7 @@ class ZMQSubscriber(threading.Thread):
     def wait_for_stop(self, timeout=1):
         start = time.time()
         print("Waiting for zmq subscriber shutdown")
-        while not self.stopped and time.time()-start < timeout:
+        while not self.stopped and time.time() - start < timeout:
             time.sleep(0.1)
         print("Subscriber stopped")
 
