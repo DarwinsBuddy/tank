@@ -15,8 +15,6 @@ class AppConfig:
                             help='Path to config file',
                             default=pkg_resources.resource_filename('tank', 'resources/tank.conf')
                             )
-        parser.add_argument('-zp', '--zmq-port', type=int, nargs=1, help='Listen port for zmq subscriber', default=5555)
-
         return parser.parse_args()
 
     @staticmethod
@@ -31,6 +29,8 @@ class AppConfig:
         self.config = self.read_config(args.config)
         # flask
         self.SECRET = self.config['Flask']['secret'] or None
+        self.HOST = self.config['Flask']['host'] or '0.0.0.0'
+        self.PORT = int(self.config['Flask']['port']) or 8080
         # zmq
         self.ZMQ_PORT = self.config['ZMQ']['port'] or 5555
         # socketio

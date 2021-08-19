@@ -110,5 +110,5 @@ class App:
         print("Starting Scheduler")
         self.scheduler.start()
         print("Starting flask application with config")
-        self.app.run(host='127.0.0.1', port=8080)
+        self.app.run(host=self.config.HOST, port=self.config.PORT)
         print("END")
