@@ -3,15 +3,14 @@ import subprocess
 import sys
 from distutils.command.install import install
 
-from setuptools import setup, find_packages
-from setuptools._distutils import cmd
+from setuptools import setup, find_packages, Command
 
 RESOURCES = "resources"
 WEBAPP = "webapp"
 MODULE = "tank"
 
 
-class NpmCommand(cmd.Command):
+class NpmCommand(Command):
     """A custom command to run Pylint on all Python source files."""
 
     description = 'run npm install & build'
