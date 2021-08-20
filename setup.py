@@ -5,9 +5,8 @@ from distutils.command.install import install
 
 from setuptools import setup, find_packages, Command
 
-RESOURCES = "resources"
-WEBAPP = "webapp"
 MODULE = "tank"
+_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
 class NpmCommand(Command):
@@ -22,7 +21,7 @@ class NpmCommand(Command):
     def initialize_options(self):
         """Set default values for options."""
         # Each user option must be listed here with their default value.
-        self.webapp_path = "./tank/resources/webapp"
+        self.webapp_path = "tank/data/web"
 
     def finalize_options(self):
         """Post-process options."""
@@ -65,10 +64,12 @@ setup(
         include=[f'{MODULE}', f'{MODULE}.*']
     ),
     package_data={"tank": [
-        "resources/webapp/dist/assets/*",
-        "resources/webapp/dist/index.html"
-        "resources/tank.service"
+        "data/web/dist/assets/*",
+        "data/web/dist/index.html",
+        "data/tank.service",
+        "data/tank.conf",
     ]},
+    include_package_data=True,
     cmdclass={
         'install': InstallWrapper,
         'build-client': NpmCommand

@@ -1,29 +1,25 @@
 import random
 from pprint import pprint
 
-import pkg_resources
 from flask import Flask
 from flask_apscheduler import APScheduler
 from flask_socketio import SocketIO
 
-from . import routes
+from . import routes, get_data
 from .config import AppConfig
 from .storage import InMemoryStore
 from .zeromq import ZMQSubscriber, ZMQPublisher
 
 
 class App:
-    WEBAPP_DIR = 'resources/webapp'
+    WEB_APP_ROOT = get_data('web/dist')
     depth_sub = None
 
     def __init__(self, config: AppConfig):
         self.config = config
         self.store = InMemoryStore(config)
-        webapp_folder = pkg_resources.resource_filename('tank', self.WEBAPP_DIR)
-        dist_folder = 'dist'
-        webapp_root = f'{webapp_folder}/{dist_folder}'
-        print("webapp mounted at ", webapp_root)
-        self.app = Flask(__name__, static_folder=webapp_root)
+        print("webapp mounted at ", self.WEB_APP_ROOT)
+        self.app = Flask(__name__, static_folder=self.WEB_APP_ROOT)
         self.app.config.from_object(config)
         self.depth_sub = ZMQSubscriber(
             "depth",

@@ -1,7 +1,7 @@
 import threading
 import datetime
 
-from tank import AppConfig
+from tank.config import AppConfig
 
 
 class InMemoryStore:

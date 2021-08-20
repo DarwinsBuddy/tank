@@ -2,7 +2,7 @@ import os
 
 from flask import send_from_directory, request, jsonify, render_template
 
-from tank import AppConfig
+from tank.config import AppConfig
 from tank.storage import InMemoryStore
 
 

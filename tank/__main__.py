@@ -1,7 +1,7 @@
 import signal
 import sys
 
-from tank import AppConfig
+from tank.config import AppConfig
 from .server import App
 
 if __name__ == "__main__":
