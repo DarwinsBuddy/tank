@@ -11,11 +11,11 @@ export type Config = {
 }
 
 export const config: Config = {
-    backend: 'http://localhost:8080',
+    backend: 'http://192.168.178.78:8080',
     HISTORY_LIMIT: 100,
     NAMESPACE: 'data',
-    MAX_HEIGHT: 6,
-    MIN_HEIGHT: 0.5,
+    MAX_HEIGHT: 1.8,
+    MIN_HEIGHT: 0.3,
     LOCALE: 'de-AT'
 };
 
