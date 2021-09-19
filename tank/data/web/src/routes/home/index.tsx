@@ -12,7 +12,7 @@ import {
   DepthMeasurement,
   initialDepthMeasurement,
 } from "../../model/depth-measurement";
-import { home, text, title } from "./style";
+import { home, text, title, currently, px1 } from "./style";
 
 const Home: FunctionalComponent = () => {
   const socket = useContext(SocketContext);
@@ -41,16 +41,16 @@ const Home: FunctionalComponent = () => {
 
   return (
     <div css={home}>
-      <div css={title}>Currently</div>
-      {!!measurement.depth && (
-        <div>
-          <div css={text}>
-            {utcStringToLocalString(config.LOCALE, measurement.date) || "N/A"}
-          </div>
-          <div css={text}>{measurement.depth} m</div>
-        </div>
-      )}
-      {!measurement.depth && <div css={text}>no live data</div>}
+      <div css={currently}>
+        <div>Currently</div>
+          {!!measurement.depth && (
+              <div css={px1}>
+                {utcStringToLocalString(config.LOCALE, measurement.date) || "N/A"}
+              </div>
+          )}
+          {!!measurement.depth && (<div css={px1}>{measurement.depth} m</div>)}
+          {!measurement.depth && <div css={px1}>no live data</div>}
+      </div>
       <div css={title}>History</div>
       <HistoryChart showChart />
     </div>

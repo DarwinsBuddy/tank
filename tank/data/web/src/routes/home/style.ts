@@ -6,6 +6,23 @@ export const home = css`
 	width: 100%;
 `;
 
+export const currently = css`
+    display: flex;
+    flex-direction: row;
+    justify-content: between;
+    align-items: start;
+    width: 100%;
+	font-size: normal;
+	font-weight: 800;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+`;
+
+export const px1 = css`
+    padding-left: 1rem;
+    padding-right: 1rem;
+`;
+
 export const title = css`
     display: flex;
     flex-direction: row;

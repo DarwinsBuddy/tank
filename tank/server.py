@@ -41,7 +41,8 @@ class App:
         self.scheduler = APScheduler()
         self.socket = SocketIO(self.app, async_mode=None, cors_allowed_origins='*')
 
-    def mock_measure_depth(self, min_depth=100, max_depth=250):
+    def mock_measure_depth(self, min_depth=130, max_depth=170):
+        # TODO: somehow fix this to match client output
         # mocked measuring
         depth = random.randint(min_depth, max_depth) / 100
         print("[MOCK MEASURING] ", depth)

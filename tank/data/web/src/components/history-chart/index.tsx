@@ -42,14 +42,14 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
    
         return (
             <div css={chartContainer}>
-                <ResponsiveContainer width="80%" height="50%">
-                    <LineChart data={series.data} margin={{ top: 5, right: 0, bottom: 150, left: 150 }}>
+                <ResponsiveContainer width="90%" height="75%">
+                    <LineChart data={series.data} margin={{ top: 5, right: 0, bottom: 150, left: 0 }}>
                         <Line type="monotone" dataKey="depth" stroke="#8884d8" dot={{r: 1}} animationDuration={50} />
                         <ReferenceLine y={config.MAX_HEIGHT} label="Full" stroke="red" strokeDasharray="4 3" />
                         <ReferenceLine y={config.MIN_HEIGHT} label="Empty" stroke="green" strokeDasharray="4 3" />
                         <CartesianGrid stroke="#ccc" strokeDasharray="1 1" />
                         <XAxis dataKey="date" textAnchor="end" angle={-45} />
-                        <YAxis dataKey="depth" textAnchor="end" label={(<Text x={0} y={0} dx={180}dy={150} offset={0} angle={-90}>Water level (m)</Text>)} />
+                        <YAxis dataKey="depth" textAnchor="end" domain={[0, config.MAX_HEIGHT+0.2]} label={(<Text x={0} y={0} dx={20}dy={150} offset={0} angle={-90}>Water level (m)</Text>)} />
                         <Tooltip />
                     </LineChart>
                 </ResponsiveContainer>

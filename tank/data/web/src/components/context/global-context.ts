@@ -10,8 +10,9 @@ export type Config = {
     LOCALE: string;
 }
 
+// TODO: make this configurable on build
 export const config: Config = {
-    backend: 'http://192.168.178.78:8080',
+    backend: 'http://192.168.0.17:8080',
     HISTORY_LIMIT: 100,
     NAMESPACE: 'data',
     MAX_HEIGHT: 1.8,
