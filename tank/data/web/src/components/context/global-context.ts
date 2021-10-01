@@ -12,7 +12,7 @@ export type Config = {
 
 // TODO: make this configurable on build
 export const config: Config = {
-    backend: 'http://192.168.0.17:8080',
+    backend: 'http://localhost:8080',
     HISTORY_LIMIT: 100,
     NAMESPACE: 'data',
     MAX_HEIGHT: 1.8,
