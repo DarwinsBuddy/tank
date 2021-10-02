@@ -46,5 +46,4 @@ jobs:
         overwrite: true
         tag: ${{ github.ref }}
         prerelease: false
-        release_name: v${{ env.RELEASE_VERSION }}
         repo_name: DarwinsBuddy/tank
