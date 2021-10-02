@@ -37,8 +37,8 @@ class NpmCommand(Command):
             sys.exit(1)
         wd = os.getcwd()
         os.chdir(self.webapp_path)
-        npm_install = ['/usr/bin/npm', 'install']
-        npm_build = ['/usr/bin/npm', 'run', 'build']
+        npm_install = ['npm', 'install']
+        npm_build = ['npm', 'run', 'build']
         self.announce(str(npm_install))
         subprocess.check_call(npm_install)
         self.announce(str(npm_build))
@@ -59,7 +59,7 @@ setup(
     author="Christoph Spörk",
     author_email="christoph.spoerk@gmail.com",
     platforms="any",
-    version='0.1.0',
+    version='1.0.0',
     packages=find_packages(
         include=[f'{MODULE}', f'{MODULE}.*']
     ),

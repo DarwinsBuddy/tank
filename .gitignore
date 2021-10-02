@@ -1,3 +1,4 @@
+.secrets
 .idea/
 **/__pycache__
 tank/__pycache__
