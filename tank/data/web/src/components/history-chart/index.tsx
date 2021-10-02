@@ -58,7 +58,7 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
     }
 
     useEffect(() => {
-        fetch(`${config.backend}/history?limit=${config.HISTORY_LIMIT}`)
+        fetch(`${config.backend()}/history?limit=${config.HISTORY_LIMIT}`)
         .then((response: Response) => {
             if (!response.ok) {
                 throw new Error(response.statusText);

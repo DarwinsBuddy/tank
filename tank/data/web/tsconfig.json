@@ -21,7 +21,7 @@
       "/Types/"
     ]
   },
-  "include": ["src"],
+  "include": ["src", "src/environments/.env.ts", "src/environments/.env.production.ts", "src/environments/.env.development.ts"],
   "exclude": [
     "/node_modules/"
   ]

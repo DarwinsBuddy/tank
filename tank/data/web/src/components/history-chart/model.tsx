@@ -11,7 +11,6 @@ export type SeriesPoint = {
 }
 
 export function utcStringToLocalString(locale: string, date: string | null ): string | null {
-    console.log(date);
     if (date !== null) {
         const d = new Date(date);
         return `${d.toLocaleDateString(locale)} ${d.toLocaleTimeString(locale, {hour12: false})}`;
