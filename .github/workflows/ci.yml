@@ -41,10 +41,10 @@ jobs:
       with:
         id: "upload_release"
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: "./dist/tank-${ RELEASE_VERSION }-py3-none-any.whl"
-        asset_name: "tank-${ RELEASE_VERSION }-py3-none-any.whl"
+        file: ./dist/tank-${{ env.RELEASE_VERSION }}-py3-none-any.whl
+        asset_name: "tank-${{ env.RELEASE_VERSION }}-py3-none-any.whl"
         overwrite: true
         tag: ${{ github.ref }}
         prerelease: false
-        release_name: "v${ RELEASE_VERSION }"
+        release_name: v${{ env.RELEASE_VERSION }}
         repo_name: DarwinsBuddy/tank
