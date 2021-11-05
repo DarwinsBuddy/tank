@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'preact/hooks';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, Text } from 'recharts';
 import { DepthMeasurement, initialDepthMeasurement } from '../../model/depth-measurement';
 import { Config, ConfigContext, SocketContext } from '../context/global-context';
-import { Series, toSeriesPoint } from './model';
+import { Series, SeriesPoint, toSeriesPoint } from './model';
 import { jsx } from '@emotion/react';
 import { centered, chartContainer } from './style';
 import { FunctionalComponent, h } from 'preact';
@@ -36,6 +36,14 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
             </div>);
         }
         return events;
+    }
+
+    function isOffline(data: SeriesPoint[], current: SeriesPoint) {
+        if(data !== null) {
+            const last = data[data.length-1];
+            return last.date === current.date && last.depth == current.depth;
+        }
+        return false;
     }
 
     function renderChart(series: Series) {
@@ -82,10 +90,11 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
             socket.off("depth", (depth: DepthMeasurement) => console.log(`OFF: ${depth}`));
         }
         // subscribe to socket events
-        socket.on("depth", (depth: DepthMeasurement) => {
+        socket.on("depth", (measurement: DepthMeasurement) => {
+            const currentMeasurement = toSeriesPoint(measurement, config.LOCALE, config.MAX_HEIGHT);
             setChartData({
                 label: DEPTH_SERIES_LABEL,
-                data: [...chartData.data, toSeriesPoint(depth, config.LOCALE, config.MAX_HEIGHT)]
+                data: [...chartData.data, currentMeasurement]
             })
         }); 
         return onDismount;

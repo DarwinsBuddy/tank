@@ -10,14 +10,39 @@ import HistoryChart from "../../components/history-chart";
 import { utcStringToLocalString } from "../../components/history-chart/model";
 import {
   DepthMeasurement,
-  initialDepthMeasurement,
+  MeasurementState,
+  initialMeasurements
 } from "../../model/depth-measurement";
-import { home, text, title, currently, px1 } from "./style";
+import { home, title, currently, px1, warning } from "./style";
 
 const Home: FunctionalComponent = () => {
   const socket = useContext(SocketContext);
   const config = useContext(ConfigContext);
-  const [measurement, setMeasurement] = useState(initialDepthMeasurement);
+  const [msrmt, setMsrmt] = useState(initialMeasurements);
+
+  function getDiff(last: DepthMeasurement | null, current: DepthMeasurement | null) {
+    if (!!last?.date && !!current?.date)
+    {  
+      const ld = Date.parse(last.date);
+      const cd = Date.parse(current.date);
+      return cd - ld;
+    }
+    return 0;
+  }
+
+  function isOutDated(m: MeasurementState) {
+    return m.diff > config.OUTDATED_THRESHOLD;
+  }
+
+  function toTimeString(seconds: number) {
+    const sec = Math.round(seconds % 60);
+    const minutes = Math.floor(seconds / 60);
+    const min = minutes % 60;
+    const hours = Math.floor(minutes / 60);
+    const h = hours % 24;
+    const days = Math.floor(hours / 24);
+    return `${days > 0 ? days+"d" : ''} ${h > 0 ? h+"h" : ''} ${min > 0 ? min+"min" : ''} ${sec > 0 ? sec+"sec" : ''}`;
+  }
 
   useEffect(() => {
     function onDismount(): void {
@@ -32,24 +57,35 @@ const Home: FunctionalComponent = () => {
     //socket.emit("my_event", {data: 'test'});
 
     // subscribe to socket events
-    socket.on("depth", (measurement: DepthMeasurement) =>
-      setMeasurement(measurement)
-    );
+    socket.on("depth", (measurement: DepthMeasurement) => {
+      setMsrmt({...msrmt,
+        last: msrmt.current,
+        current: measurement,
+        diff: getDiff(msrmt.current, measurement) / 1000
+      });
+    });
 
     return onDismount;
-  }, [socket]);
+  }, [socket, msrmt]);
 
   return (
     <div css={home}>
       <div css={currently}>
-        <div>Currently</div>
-          {!!measurement.depth && (
+        <div>Last measurement</div>
+          {!!msrmt.current?.depth && (
               <div css={px1}>
-                {utcStringToLocalString(config.LOCALE, measurement.date) || "N/A"}
+                {utcStringToLocalString(config.LOCALE, msrmt.current?.date) || "N/A"}
               </div>
           )}
-          {!!measurement.depth && (<div css={px1}>{measurement.depth} m</div>)}
-          {!measurement.depth && <div css={px1}>no live data</div>}
+          {!!msrmt.current?.depth && (<div css={px1}>{msrmt.current?.depth} m</div>)}
+          {!msrmt.current?.depth && <div css={px1}>no live data</div>}
+          {isOutDated(msrmt) && 
+            <div css={warning}>
+              <div>Lost connection since</div>
+              <div css={px1}>
+                {toTimeString(msrmt.diff)}
+              </div>
+            </div>}
       </div>
       <div css={title}>History</div>
       <HistoryChart showChart />

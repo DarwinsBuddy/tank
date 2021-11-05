@@ -1,5 +1,16 @@
 import { css } from '@emotion/react';
 
+export const warning = css`
+    color: #993800;
+    display: flex;
+    flex-direction: row;
+    justify-content: between;
+    align-items: start;
+    font-size: normal;
+    font-weight: 600;
+`;
+
+
 export const home = css`
 	padding: 56px 20px;
 	min-height: 100%;

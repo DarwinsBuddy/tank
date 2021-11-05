@@ -41,13 +41,15 @@ class App:
         self.scheduler = APScheduler()
         self.socket = SocketIO(self.app, async_mode=None, cors_allowed_origins='*')
 
-    def mock_measure_depth(self, min_depth=130, max_depth=170):
-        # TODO: somehow fix this to match client output
+    def mock_measure_depth(self, min_depth=0, max_depth=165, connection_loss_probability=0.0):
         # mocked measuring
         depth = random.randint(min_depth, max_depth) / 100
         print("[MOCK MEASURING] ", depth)
         if self.depth_mock_pub is not None:
-            self.depth_mock_pub.send(f'{depth}')
+            if connection_loss_probability == 0 or random.random() > connection_loss_probability:
+                self.depth_mock_pub.send(f'{depth}')
+            else:
+                print("Simulate connection loss")
 
     def broadcast_history(self):
         self.socket.emit('history', self.store.get_history(), namespace=self.config.socketio_namespace)
@@ -67,7 +69,7 @@ class App:
                                )
         if self.config.args.mock:
             self.scheduler.add_job(func=self.mock_measure_depth,
-                                   args=[100, 250],
+                                   args=[0, 165, 0.0],
                                    trigger='interval',
                                    seconds=self.config.MEASURING_INTERVAL,
                                    id='mock_measure_depth',
