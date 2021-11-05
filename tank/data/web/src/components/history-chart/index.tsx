@@ -5,7 +5,7 @@ import { DepthMeasurement, initialDepthMeasurement } from '../../model/depth-mea
 import { Config, ConfigContext, SocketContext } from '../context/global-context';
 import { Series, SeriesPoint, toSeriesPoint } from './model';
 import { jsx } from '@emotion/react';
-import { centered, chartContainer } from './style';
+import { centered, chart, chartContainer } from './style';
 import { FunctionalComponent, h } from 'preact';
 import { Socket } from 'socket.io-client';
 
@@ -38,29 +38,23 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
         return events;
     }
 
-    function isOffline(data: SeriesPoint[], current: SeriesPoint) {
-        if(data !== null) {
-            const last = data[data.length-1];
-            return last.date === current.date && last.depth == current.depth;
-        }
-        return false;
-    }
-
     function renderChart(series: Series) {
    
         return (
             <div css={chartContainer}>
-                <ResponsiveContainer width="90%" height="75%">
-                    <LineChart data={series.data} margin={{ top: 5, right: 0, bottom: 150, left: 0 }}>
-                        <Line type="monotone" dataKey="depth" stroke="#8884d8" dot={{r: 1}} animationDuration={50} />
-                        <ReferenceLine y={config.MAX_HEIGHT} label="Full" stroke="red" strokeDasharray="4 3" />
-                        <ReferenceLine y={config.MIN_HEIGHT} label="Empty" stroke="green" strokeDasharray="4 3" />
-                        <CartesianGrid stroke="#ccc" strokeDasharray="1 1" />
-                        <XAxis dataKey="date" textAnchor="end" angle={-45} />
-                        <YAxis dataKey="depth" textAnchor="end" domain={[0, config.MAX_HEIGHT+0.2]} label={(<Text x={0} y={0} dx={20}dy={150} offset={0} angle={-90}>Water level (m)</Text>)} />
-                        <Tooltip />
-                    </LineChart>
-                </ResponsiveContainer>
+                <div css={chart}>
+                    <ResponsiveContainer width="90%" height="80%">
+                        <LineChart data={series.data} margin={{ top: 5, right: 0, bottom: 150, left: 0 }}>
+                            <Line type="monotone" dataKey="depth" stroke="#8884d8" dot={{r: 1}} animationDuration={50} />
+                            <ReferenceLine y={config.MAX_HEIGHT} label="Full" stroke="red" strokeDasharray="4 3" />
+                            <ReferenceLine y={config.MIN_HEIGHT} label="Empty" stroke="green" strokeDasharray="4 3" />
+                            <CartesianGrid stroke="#ccc" strokeDasharray="1 1" />
+                            <XAxis dataKey="date" textAnchor="end" angle={-45} />
+                            <YAxis dataKey="depth" textAnchor="end" domain={[0, config.MAX_HEIGHT+0.2]} label={(<Text x={0} y={0} dx={20}dy={150} offset={0} angle={-90}>Water level (m)</Text>)} />
+                            <Tooltip />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
         );
     }

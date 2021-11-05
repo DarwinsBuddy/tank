@@ -4,10 +4,11 @@ export const warning = css`
     color: #993800;
     display: flex;
     flex-direction: row;
-    justify-content: between;
+    justify-content: start;
     align-items: start;
     font-size: normal;
     font-weight: 600;
+    width: 100%;
 `;
 
 

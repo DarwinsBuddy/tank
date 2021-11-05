@@ -1,8 +1,14 @@
 import { css } from "@emotion/react";
 
 export const chartContainer = css`
-    width: 100vw;
-    height: 100vh;
+    position: absolute;
+    width: 90%;
+    height: 75%;
+`;
+export const chart = css`
+    width: 100%;
+    height: 100%;
+    position: relative;
 `;
 
 export const centered = css`

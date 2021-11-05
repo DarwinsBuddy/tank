@@ -7,7 +7,7 @@ import {
   SocketContext,
 } from "../../components/context/global-context";
 import HistoryChart from "../../components/history-chart";
-import { utcStringToLocalString } from "../../components/history-chart/model";
+import { toSeriesPoint, utcStringToLocalString } from "../../components/history-chart/model";
 import {
   DepthMeasurement,
   MeasurementState,
@@ -41,7 +41,7 @@ const Home: FunctionalComponent = () => {
     const hours = Math.floor(minutes / 60);
     const h = hours % 24;
     const days = Math.floor(hours / 24);
-    return `${days > 0 ? days+"d" : ''} ${h > 0 ? h+"h" : ''} ${min > 0 ? min+"min" : ''} ${sec > 0 ? sec+"sec" : ''}`;
+    return `${days > 0 ? days+" d" : ''} ${h > 0 ? h+" h" : ''} ${min > 0 ? min+" min" : ''} ${sec > 0 ? sec+" sec" : ''}`;
   }
 
   useEffect(() => {
@@ -71,26 +71,38 @@ const Home: FunctionalComponent = () => {
   return (
     <div css={home}>
       <div css={currently}>
-        <div>Last measurement</div>
           {!!msrmt.current?.depth && (
-              <div css={px1}>
+              <div>
                 {utcStringToLocalString(config.LOCALE, msrmt.current?.date) || "N/A"}
               </div>
           )}
-          {!!msrmt.current?.depth && (<div css={px1}>{msrmt.current?.depth} m</div>)}
-          {!msrmt.current?.depth && <div css={px1}>no live data</div>}
-          {isOutDated(msrmt) && 
-            <div css={warning}>
-              <div>Lost connection since</div>
-              <div css={px1}>
-                {toTimeString(msrmt.diff)}
-              </div>
-            </div>}
+          {renderDepth(msrmt)}
+      </div>
+      <div css={warning}>
+        {signalMsg()}
       </div>
       <div css={title}>History</div>
       <HistoryChart showChart />
     </div>
   );
+
+  function renderDepth(m: MeasurementState): JSX.Element {
+    if(m.current?.depth) {
+      var d = toSeriesPoint(m.current, config.LOCALE, config.MAX_HEIGHT)?.depth;
+      var roundedD = Math.round((d + Number.EPSILON) * 100) / 100;
+      return <div css={px1}>
+        {roundedD} m
+      </div>;
+    }
+    return <div css={px1}>no data</div>;
+  }
+
+  function signalMsg(): JSX.Element {
+    if (isOutDated(msrmt)) {
+        return <div>Last signal {toTimeString(msrmt.diff)} ago</div>;
+    }
+    return <div>LIVE</div>;
+  }
 };
 
 export default Home;
