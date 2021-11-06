@@ -13,7 +13,7 @@ export const warning = css`
 
 
 export const home = css`
-	padding: 56px 20px;
+	padding: 56px 0 0 20px;
 	min-height: 100%;
 	width: 100%;
 `;
@@ -43,7 +43,7 @@ export const title = css`
     width: 100%;
 	font-size: larger;
 	font-weight: 800;
-	margin-top: 1rem;
+	margin-top: 0.25rem;
 	margin-bottom: 1rem;
 `;
 

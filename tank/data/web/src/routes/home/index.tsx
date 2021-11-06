@@ -20,12 +20,11 @@ const Home: FunctionalComponent = () => {
   const config = useContext(ConfigContext);
   const [msrmt, setMsrmt] = useState(initialMeasurements);
 
-  function getDiff(last: DepthMeasurement | null, current: DepthMeasurement | null) {
-    if (!!last?.date && !!current?.date)
-    {  
-      const ld = Date.parse(last.date);
-      const cd = Date.parse(current.date);
-      return cd - ld;
+  function getDiff(current: DepthMeasurement | null) {
+    if (!!current?.date) {
+      const now = new Date();
+      var nowUtc = new Date(now.getTime() + now.getTimezoneOffset() * 60000).getTime();
+      return nowUtc - Date.parse(current.date);
     }
     return 0;
   }
@@ -61,7 +60,7 @@ const Home: FunctionalComponent = () => {
       setMsrmt({...msrmt,
         last: msrmt.current,
         current: measurement,
-        diff: getDiff(msrmt.current, measurement) / 1000
+        diff: getDiff(measurement) / 1000
       });
     });
 
@@ -79,7 +78,7 @@ const Home: FunctionalComponent = () => {
           {renderDepth(msrmt)}
       </div>
       <div css={warning}>
-        {signalMsg()}
+        {signalMsg(msrmt)}
       </div>
       <div css={title}>History</div>
       <HistoryChart showChart />
@@ -90,18 +89,19 @@ const Home: FunctionalComponent = () => {
     if(m.current?.depth) {
       var d = toSeriesPoint(m.current, config.LOCALE, config.MAX_HEIGHT)?.depth;
       var roundedD = Math.round((d + Number.EPSILON) * 100) / 100;
-      return <div css={px1}>
-        {roundedD} m
-      </div>;
+      return <div css={px1}>{roundedD+" m"}</div>;
     }
-    return <div css={px1}>no data</div>;
+    return <div>no data</div>;
   }
 
-  function signalMsg(): JSX.Element {
-    if (isOutDated(msrmt)) {
-        return <div>Last signal {toTimeString(msrmt.diff)} ago</div>;
+  function signalMsg(m: MeasurementState): JSX.Element {
+    if (m?.current?.depth) {
+      if (isOutDated(msrmt)) {
+          return <div>Last signal {toTimeString(msrmt.diff)} ago</div>;
+      }
+      return <div>LIVE</div>;
     }
-    return <div>LIVE</div>;
+    return <div>no data</div>;
   }
 };
 

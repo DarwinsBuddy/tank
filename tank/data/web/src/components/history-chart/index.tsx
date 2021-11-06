@@ -1,13 +1,14 @@
 /** @jsx jsx */
 import { useContext, useEffect, useState } from 'preact/hooks';
-import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, Text } from 'recharts';
+import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, Text, XAxisProps } from 'recharts';
 import { DepthMeasurement, initialDepthMeasurement } from '../../model/depth-measurement';
 import { Config, ConfigContext, SocketContext } from '../context/global-context';
-import { Series, SeriesPoint, toSeriesPoint } from './model';
+import { Series, toSeriesPoint } from './model';
 import { jsx } from '@emotion/react';
 import { centered, chart, chartContainer } from './style';
 import { FunctionalComponent, h } from 'preact';
 import { Socket } from 'socket.io-client';
+import { SVGProps } from 'react';
 
 interface HistoryChartProperties {
     showChart?: boolean;
@@ -38,6 +39,11 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
         return events;
     }
 
+    const formatXAxis = (tickItem: any) => {
+        const [date,time] = tickItem.split(" ");
+        return `${time}`;
+      }
+
     function renderChart(series: Series) {
    
         return (
@@ -49,9 +55,9 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
                             <ReferenceLine y={config.MAX_HEIGHT} label="Full" stroke="red" strokeDasharray="4 3" />
                             <ReferenceLine y={config.MIN_HEIGHT} label="Empty" stroke="green" strokeDasharray="4 3" />
                             <CartesianGrid stroke="#ccc" strokeDasharray="1 1" />
-                            <XAxis dataKey="date" textAnchor="end" angle={-45} />
+                            <XAxis dataKey="date" textAnchor="end" angle={-45} tickFormatter={formatXAxis}/>
                             <YAxis dataKey="depth" textAnchor="end" domain={[0, config.MAX_HEIGHT+0.2]} label={(<Text x={0} y={0} dx={20}dy={150} offset={0} angle={-90}>Water level (m)</Text>)} />
-                            <Tooltip />
+                            <Tooltip/>
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
