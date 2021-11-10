@@ -16,5 +16,9 @@ html, body {
 }
 
 #app {
-	height: 100%;
+	height: 100vh;
+}
+
+#preact_root {
+	height: 100vh;
 }

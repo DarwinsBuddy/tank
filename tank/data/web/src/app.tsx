@@ -3,6 +3,7 @@ import { Route, Router } from 'preact-router';
 
 import Home from './routes/home';
 import NotFoundPage from './routes/notfound';
+import { jsx } from '@emotion/react';
 import Header from './components/header';
 import { ConfigContext, config, SocketContext, socket } from './components/context/global-context';
 

@@ -7,13 +7,16 @@ import {
   SocketContext,
 } from "../../components/context/global-context";
 import HistoryChart from "../../components/history-chart";
-import { toSeriesPoint, utcStringToLocalString } from "../../components/history-chart/model";
+import {
+  toSeriesPoint,
+  utcStringToLocalString,
+} from "../../components/history-chart/model";
 import {
   DepthMeasurement,
+  initialMeasurements,
   MeasurementState,
-  initialMeasurements
 } from "../../model/depth-measurement";
-import { home, title, currently, px1, warning } from "./style";
+import { currently, home, info, warning, ws } from "./style";
 
 const Home: FunctionalComponent = () => {
   const socket = useContext(SocketContext);
@@ -23,7 +26,9 @@ const Home: FunctionalComponent = () => {
   function getDiff(current: DepthMeasurement | null) {
     if (!!current?.date) {
       const now = new Date();
-      var nowUtc = new Date(now.getTime() + now.getTimezoneOffset() * 60000).getTime();
+      var nowUtc = new Date(
+        now.getTime() + now.getTimezoneOffset() * 60000
+      ).getTime();
       return nowUtc - Date.parse(current.date);
     }
     return 0;
@@ -40,7 +45,9 @@ const Home: FunctionalComponent = () => {
     const hours = Math.floor(minutes / 60);
     const h = hours % 24;
     const days = Math.floor(hours / 24);
-    return `${days > 0 ? days+" d" : ''} ${h > 0 ? h+" h" : ''} ${min > 0 ? min+" min" : ''} ${sec > 0 ? sec+" sec" : ''}`;
+    return `${days > 0 ? days + " d" : ""} ${h > 0 ? h + " h" : ""} ${
+      min > 0 ? min + " min" : ""
+    } ${sec > 0 ? sec + " sec" : ""}`;
   }
 
   useEffect(() => {
@@ -57,10 +64,11 @@ const Home: FunctionalComponent = () => {
 
     // subscribe to socket events
     socket.on("depth", (measurement: DepthMeasurement) => {
-      setMsrmt({...msrmt,
+      setMsrmt({
+        ...msrmt,
         last: msrmt.current,
         current: measurement,
-        diff: getDiff(measurement) / 1000
+        diff: getDiff(measurement) / 1000,
       });
     });
 
@@ -69,39 +77,42 @@ const Home: FunctionalComponent = () => {
 
   return (
     <div css={home}>
-      <div css={currently}>
+      <div css={info}>
+        <div css={currently}>
           {!!msrmt.current?.depth && (
-              <div>
-                {utcStringToLocalString(config.LOCALE, msrmt.current?.date) || "N/A"}
-              </div>
+            <div>
+              {utcStringToLocalString(config.LOCALE, msrmt.current?.date) ||
+                "N/A"}
+            </div>
           )}
-          {renderDepth(msrmt)}
+          {!msrmt.current?.depth && <div>n/a</div>}
+        </div>
+        <div css={currently}>{renderDepth(msrmt)}</div>
+        <div css={warning}>{signalMsg(msrmt)}</div>
       </div>
-      <div css={warning}>
-        {signalMsg(msrmt)}
-      </div>
-      <div css={title}>History</div>
       <HistoryChart showChart />
     </div>
   );
 
   function renderDepth(m: MeasurementState): JSX.Element {
-    if(m.current?.depth) {
-      var d = toSeriesPoint(m.current, config.LOCALE, config.MAX_HEIGHT)?.depth;
+    if (m.current?.depth) {
+      var d = toSeriesPoint(m.current, config.LOCALE, config.MAX_HEIGHT())?.depth;
       var roundedD = Math.round((d + Number.EPSILON) * 100) / 100;
-      return <div css={px1}>{roundedD+" m"}</div>;
+      return <div css={ws.nowrap}>{roundedD + " m"}</div>;
     }
-    return <div>no data</div>;
+    return <div css={ws.nowrap}>n/a</div>;
   }
 
   function signalMsg(m: MeasurementState): JSX.Element {
     if (m?.current?.depth) {
       if (isOutDated(msrmt)) {
-          return <div>Last signal {toTimeString(msrmt.diff)} ago</div>;
+        return (
+          <div css={ws.nowrap}>Last signal {toTimeString(msrmt.diff)} ago</div>
+        );
       }
-      return <div>LIVE</div>;
+      return <div css={ws.nowrap}>• LIVE</div>;
     }
-    return <div>no data</div>;
+    return <div css={ws.nowrap}>Loading</div>;
   }
 };
 

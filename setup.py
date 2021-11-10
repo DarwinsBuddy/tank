@@ -59,7 +59,7 @@ setup(
     author="Christoph Spörk",
     author_email="christoph.spoerk@gmail.com",
     platforms="any",
-    version='1.1.1',
+    version='1.1.2',
     packages=find_packages(
         include=[f'{MODULE}', f'{MODULE}.*']
     ),

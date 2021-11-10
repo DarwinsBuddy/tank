@@ -7,17 +7,9 @@ export type Config = {
     HISTORY_LIMIT: number;
     OUTDATED_THRESHOLD: number;
     NAMESPACE: string;
-    MAX_HEIGHT: number;
-    MIN_HEIGHT: number;
+    MAX_HEIGHT: () => number;
+    MIN_HEIGHT: () => number;
     LOCALE: string;
-}
-
-function configGet<T>(name: string, def: T): T {
-    if(!!import.meta.env[name]) {
-        return import.meta.env[name] as unknown as T;
-    } else {
-        return def;
-    }
 }
 
 export const config: Config = {
@@ -32,8 +24,20 @@ export const config: Config = {
     HISTORY_LIMIT: 100,
     OUTDATED_THRESHOLD: 60,
     NAMESPACE: 'data',
-    MAX_HEIGHT: configGet<number>('MAX_HEIGHT', 1.8),
-    MIN_HEIGHT: configGet<number>('MIN_HEIGHT', 0.3),
+    MAX_HEIGHT: () => {
+        if(!!import.meta.env.VITE_MAX_HEIGHT) {
+            return +import.meta.env.VITE_MAX_HEIGHT;
+        } else {
+            return 1.8;
+        }
+    },
+    MIN_HEIGHT: () => {
+        if(!!import.meta.env.VITE_MIN_HEIGHT) {
+            return +import.meta.env.VITE_MIN_HEIGHT;
+        } else {
+            return 0.2;
+        }
+    },
     LOCALE: 'de-AT'
 };
 

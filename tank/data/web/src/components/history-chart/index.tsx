@@ -5,10 +5,9 @@ import { DepthMeasurement, initialDepthMeasurement } from '../../model/depth-mea
 import { Config, ConfigContext, SocketContext } from '../context/global-context';
 import { Series, toSeriesPoint } from './model';
 import { jsx } from '@emotion/react';
-import { centered, chart, chartContainer } from './style';
+import { centered, chart } from './style';
 import { FunctionalComponent, h } from 'preact';
 import { Socket } from 'socket.io-client';
-import { SVGProps } from 'react';
 
 interface HistoryChartProperties {
     showChart?: boolean;
@@ -23,7 +22,7 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
     const [chartData, setChartData] = useState<Series>(
         {
             label: null,
-            data: [toSeriesPoint(initialDepthMeasurement, config.LOCALE, config.MAX_HEIGHT)]
+            data: [toSeriesPoint(initialDepthMeasurement, config.LOCALE, config.MAX_HEIGHT())]
         }
     );
 
@@ -46,23 +45,18 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
 
     function renderChart(series: Series) {
    
-        return (
-            <div css={chartContainer}>
-                <div css={chart}>
-                    <ResponsiveContainer width="90%" height="80%">
-                        <LineChart data={series.data} margin={{ top: 5, right: 0, bottom: 150, left: 0 }}>
-                            <Line type="monotone" dataKey="depth" stroke="#8884d8" dot={{r: 1}} animationDuration={50} />
-                            <ReferenceLine y={config.MAX_HEIGHT} label="Full" stroke="red" strokeDasharray="4 3" />
-                            <ReferenceLine y={config.MIN_HEIGHT} label="Empty" stroke="green" strokeDasharray="4 3" />
-                            <CartesianGrid stroke="#ccc" strokeDasharray="1 1" />
-                            <XAxis dataKey="date" textAnchor="end" angle={-45} tickFormatter={formatXAxis}/>
-                            <YAxis dataKey="depth" textAnchor="end" domain={[0, config.MAX_HEIGHT+0.2]} label={(<Text x={0} y={0} dx={20}dy={150} offset={0} angle={-90}>Water level (m)</Text>)} />
-                            <Tooltip/>
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
-        );
+        return <ResponsiveContainer>
+                    <LineChart data={series.data} margin={{ top: 0, right: 15, bottom: 35, left: -20 }}>
+                        <Line type="monotone" dataKey="depth" stroke="#8884d8" dot={{r: 1}} animationDuration={50} />
+                        <ReferenceLine y={config.MAX_HEIGHT()} label={`Full ${config.MAX_HEIGHT()}m`} stroke="red" strokeDasharray="4 3" />
+                        <ReferenceLine y={config.MIN_HEIGHT()} label={`Empty ${config.MIN_HEIGHT()}m`} stroke="green" strokeDasharray="4 3" />
+                        <CartesianGrid stroke="#ccc" strokeDasharray="1 1" />
+                        <XAxis dataKey="date" textAnchor="end" angle={-45} tickFormatter={formatXAxis}/>
+                        <YAxis dataKey="depth" textAnchor="end" domain={[0, config.MAX_HEIGHT()+0.4]} label={(<Text x={0} y={0} dx={45} dy={15} offset={0} angle={0}>water level [m]</Text>)} />
+                        <Tooltip/>
+                    </LineChart>
+                </ResponsiveContainer>
+        ;
     }
 
     useEffect(() => {
@@ -77,7 +71,7 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
             setHistory(response.history);
             setChartData({
                 label: DEPTH_SERIES_LABEL,
-                data: response.history.map(m => toSeriesPoint(m, config.LOCALE, config.MAX_HEIGHT))
+                data: response.history.map(m => toSeriesPoint(m, config.LOCALE, config.MAX_HEIGHT()))
             });
             console.log(`Got ${response.history.length} entries`);
         });
@@ -91,17 +85,17 @@ const HistoryChart: FunctionalComponent<HistoryChartProperties> = (props: Histor
         }
         // subscribe to socket events
         socket.on("depth", (measurement: DepthMeasurement) => {
-            const currentMeasurement = toSeriesPoint(measurement, config.LOCALE, config.MAX_HEIGHT);
+            const currentMeasurement = toSeriesPoint(measurement, config.LOCALE, config.MAX_HEIGHT());
             setChartData({
                 label: DEPTH_SERIES_LABEL,
                 data: [...chartData.data, currentMeasurement]
             })
         }); 
         return onDismount;
-      }, [chartData.data, config.LOCALE, config.MAX_HEIGHT, socket]);
+      }, [chartData.data, config.LOCALE, config.MAX_HEIGHT(), socket]);
 
     return (
-        <div>
+        <div css={chart}>
             {!props.showChart && renderHistoryEvents(history)}
             {props.showChart && chartData.label !== null && renderChart(chartData)}
             {props.showChart && chartData.label == null && 

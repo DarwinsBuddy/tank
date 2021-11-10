@@ -1,4 +1,14 @@
 import { css } from '@emotion/react';
+import { g } from '../../style/global';
+
+export const info = css`
+    display: flex;
+    width: 100%
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+`;
 
 export const warning = css`
     color: #993800;
@@ -8,26 +18,36 @@ export const warning = css`
     align-items: start;
     font-size: normal;
     font-weight: 600;
-    width: 100%;
 `;
 
+export const ws = {
+    nowrap: css`white-space: nowrap`
+};
+
+export const flex = {
+    nowrap: css`flex-wrap: nowrap`,
+    wrap: css`wrap`
+}
 
 export const home = css`
-	padding: 56px 0 0 20px;
-	min-height: 100%;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: ${g.header.height};
+    height: calc(100vh - 0.25rem);
 	width: 100%;
+    display: flex;
+    flex-direction: column;
 `;
 
 export const currently = css`
     display: flex;
     flex-direction: row;
-    justify-content: between;
+    justify-content: space-between;
     align-items: start;
-    width: 100%;
 	font-size: normal;
 	font-weight: 800;
-	margin-top: 1rem;
-	margin-bottom: 1rem;
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
 `;
 
 export const px1 = css`
@@ -43,8 +63,8 @@ export const title = css`
     width: 100%;
 	font-size: larger;
 	font-weight: 800;
-	margin-top: 0.25rem;
-	margin-bottom: 1rem;
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
 `;
 
 export const text = css`
@@ -54,6 +74,6 @@ export const text = css`
     align-items: center;
     width: 100%;
 	font-weight: 500;
-	margin-top: 1rem;
-	margin-bottom: 1rem;
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
 `;
